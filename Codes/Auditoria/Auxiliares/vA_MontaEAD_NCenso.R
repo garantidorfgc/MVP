@@ -4,7 +4,7 @@ require(odbc)
 require(DBI)
 library(RJDBC) ### sempre usar essa biblioteca para conectar no db2
 
-
+#Bianca esteve aqui
 
 # Chaves da conexao 
 
