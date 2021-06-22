@@ -1,8 +1,9 @@
-# Diretórios
-# Alterar SR para o nfs  Usando storage do Watson (vai continuar com 2 storages?) colocando as chaves de conexão
-SBal       = paste0(SData,"BALANCETE/")
-SBalzip    = paste0(SData,"BAL_ZIP/")
-SBal2      = paste0(SData,"BALANCETE")
+# Diret?rios
+# Alterar SR para o nfs  Usando storage do Watson (vai continuar com 2 storages?) colocando as chaves de conex?o
+SBal       = paste0(SData,"BALANCETE/");dir.create(SBal, showWarnings = FALSE)
+SBalzip    = paste0(SData,"BAL_ZIP/");dir.create(SBalzip, showWarnings = FALSE)
+SBal2      = paste0(SData,"BALANCETE");dir.create(SBal2, showWarnings = FALSE)
+
 
 dtini = "2020-12-01"
 vdata  = seq.Date(from = as.Date(dtini),to = Sys.Date(),by = "month")
@@ -11,7 +12,7 @@ vtipo = c("sociedades","bancos","conglomerados","prudencial")
 maxData = c(0,0,0,0)
 
 # Baixar arquivos do 
-#Mostrar uma conexão com a URL
+#Mostrar uma conex?o com a URL
 for(t in seq(vtipo)){
   for(i in seq(vdata)){
     itipo = vtipo[t]
@@ -167,7 +168,7 @@ dataAtual = sort(unique(c(DBBANCOS$DATA,DBSOC$DATA,DBCONGL$DATA,DBPRUD$DATA)),de
 dataAnt = sort(unique(c(DBBANCOS$DATA,DBSOC$DATA,DBCONGL$DATA,DBPRUD$DATA)),decreasing = TRUE)[2]
 
 # Salvar csv's
-# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o código e as chaves da conexão
+# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o c?digo e as chaves da conex?o
 # Salvar um dos csv do Balancete dentro do db2
 write.table(WDBSOC,paste0(SDataOutMod,"WDBSOC.CSV"),sep = ";",dec=",",row.names = FALSE)
 write.table(WDBBANCOS,paste0(SDataOutMod,"WDBBANCOS.CSV"),sep = ";",dec=",",row.names = FALSE)
@@ -188,7 +189,7 @@ classWDBTOT = sapply(WDBTOT,class)
 classWDBTOT[!classWDBTOT%in%c("numeric")]
 
 # Salvar csv's
-# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o código e as chaves da conexão
+# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o c?digo e as chaves da conex?o
 write.table(WDBTOT,paste0(SDataOutMod,"WDBTOT.CSV"),sep = ";",dec=",",row.names = FALSE)
 write.table(DBTOT,paste0(SDataOutMod,"DBTOT.CSV"),sep = ";",dec=",",row.names = FALSE)
 
@@ -200,7 +201,7 @@ DBCONGLAJ[,(ncols):=lapply(.SD, na.locf,na.rm = FALSE,fromLast = TRUE),.SDcols =
 DBCONGLAJ[,(ncols):=lapply(.SD, na.locf,na.rm = FALSE),.SDcols = ncols,by = "COD_CONGL"]
 DBCONGLAJ[is.na(CNPJ)]
 DBCONGLAJ[COD_CONGL%in%"C0051602",':='(CNPJ = 52904364,
-                                       NOME_INSTITUICAO = "CONCÓRDIA S.A. CORRETORA DE VALORES MOBILIÁRIOS, CÂMBIO E COMMODITIES")]
+                                       NOME_INSTITUICAO = "CONC?RDIA S.A. CORRETORA DE VALORES MOBILI?RIOS, C?MBIO E COMMODITIES")]
 setkey(DBCONGLAJ,DATA,COD_CONGL,CNPJ)
 CONGLFIN  = unique(DBCONGLAJ,fromLast = TRUE,by=c("COD_CONGL","CNPJ"))
 CONGLFIN1 = unique(DBCONGLAJ,fromLast = FALSE,by=c("COD_CONGL","CNPJ"))
@@ -210,7 +211,7 @@ CONGLFIN[,':='(CI = as.numeric(gsub("C00","",COD_CONGL)))]
 setkey(CONGLFIN,COD_CONGL)
 
 # Salvar csv's
-# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o código e as chaves da conexão
+# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o c?digo e as chaves da conex?o
 write.csv2(CONGLFIN,paste0(SAuxMod,"CONGLFIN.csv"),row.names = FALSE)
 
 # Leitura de csv

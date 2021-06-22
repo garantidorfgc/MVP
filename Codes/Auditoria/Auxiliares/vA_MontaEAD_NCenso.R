@@ -2,14 +2,46 @@
 require(textclean)
 require(odbc)
 require(DBI)
+library(RJDBC) ### sempre usar essa biblioteca para conectar no db2
 
-# Conexão com o Oracle
-# Chaves da conexão 
-# Códigos necessários para a visualização da base no RStudio
 
-con <- dbConnect(odbc::odbc(), .connection_string = "Driver={Oracle in instantclient_19_6};Dbq=//192.168.10.13:1521/PDB1;Uid=LUCAS.PIRES;Pwd=Fundo@2020",encoding="UTF-8")
-risco <- data.table(dbGetQuery(con,paste0("select * from fgcdatamart.TB_DEP_ELEG_RISCO")))
-dbDisconnect(con)
+
+# Chaves da conexao 
+
+drv <- JDBC(driverClass="com.ibm.db2.jcc.DB2Driver", classPath="/opt/ibm/dsdriver/java/db2jcc4.jar")
+### URl da conexÃ£o
+
+Db2_FGC_url <- paste("jdbc:db2://",
+                     "db2w-yarheby.us-south.db2w.cloud.ibm.com",
+                     ":", "50001",
+                     "/", "BLUDB", ":sslConnection=true;retrieveMessagesFromServerOnGetMessage=true;globalSessionVariables=SQL_COMPAT=NPS;",
+                     sep=""
+)
+
+### UsuÃ¡rio e senha da conexÃ£o
+Db2_FGC_connection <- dbConnect(drv,
+                                Db2_FGC_url,
+                                "bluadmin",
+                                "pE9bnZ5bzYDo0qrh6yX4_ZZ9_RQT7"
+)
+
+
+
+## con <- dbConnect(odbc::odbc(), .connection_string = "Driver={Oracle in instantclient_19_6};Dbq=//192.168.10.13:1521/PDB1;Uid=LUCAS.PIRES;Pwd=Fundo@2020",encoding="UTF-8")
+##risco <- data.table(dbGetQuery(con,paste0("select * from fgcdatamart.TB_DEP_ELEG_RISCO")))
+##dbDisconnect(con)
+
+
+
+##query <- "SELECT * FROM \"FGCDATAMART\".\"TB_DEP_ELEG_RISCO\""
+
+query <- "SELECT * FROM FGCDATAMART.TB_DEP_ELEG_RISCO"
+
+## Pega a conexÃ£o com o banco e faz a query definida acima
+data <- dbSendQuery(Db2_FGC_connection, query) 
+### Transforma o dado raw em dataframe
+risco <- dbFetch(data)
+
 
 setorder(risco,DT_COMP_FECHAMENTO)
 EAD = risco[,.(DATA=DT_COMP_FECHAMENTO,CNPJ=CD_CNPJ_LIDER,ELEG=VL_ELEGIVEIS,EAD_TOTAL=VL_EAD_TOTAL,EAD_ORD=VL_EAD_ORDINARIA,EAD_COR=VL_EAD_CORRETORA,EAD_DPGE=VL_EAD_DPGE)]
@@ -17,11 +49,11 @@ ncols = c("EAD_ORD", "EAD_COR", "EAD_DPGE", "EAD_TOTAL","ELEG")
 EAD[,(ncols):=lapply(.SD,function(x) ifelse(is.na(x),0,x)),.SDcols = ncols]
 EAD[,DATA:=as.yearmon(as.Date(paste0(DATA,"01"),format="%Y%m%d"))]
 setkey(EAD,CNPJ,DATA)
-arqto   = paste0(SDataEAD,"ElegÍveisBI - ",Sys.Date(),".csv")
-print(paste("Realizando cópia da extração SQL do BI para:",arqto))
+arqto   = paste0(SDataEAD,"Eleg?veisBI - ",Sys.Date(),".csv")
+print(paste("Realizando c?pia da extra??o SQL do BI para:",arqto))
 dataMaxElegiveis = max(EAD$DATA)
 
 # Salvar csv's
-# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o código e as chaves da conexão
+# Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o c?digo e as chaves da conex?o
 write.csv2(EAD,arqto,row.names = FALSE)
-write.csv2(EAD,paste0(SDataEAD,"ElegÍveisBI.csv"),row.names = FALSE)
+write.csv2(EAD,paste0(SDataEAD,"Eleg?veisBI.csv"),row.names = FALSE)
