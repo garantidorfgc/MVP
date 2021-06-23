@@ -1,4 +1,6 @@
 # Bibliotecas
+
+require(readxl)
 require(data.table)
 require(xts)
 require(dplyr)
@@ -6,6 +8,37 @@ require(scales)
 require(ggplot2)
 require(RColorBrewer)
 require(textclean)
+
+
+
+
+### Força a versão por causa do get object
+require(devtools)
+install_version("aws.s3", version = "0.3.12")
+## Puxa a aws.s3
+library("aws.s3")
+library(readr)
+install.packages("xlsx")
+library("xlsx")
+
+
+##Configuração das credenciais do object storage (COS)
+Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
+           "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
+           "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
+
+
+
+### Lê arquivo do nfs
+tmp <- tempfile(fileext = ".xls")
+r <- aws.s3::save_object(bucket = "mvpfundsize-donotdelete-pr-8nsdgny9fj7grs", object = "201611CONGLOMERADOS.xls", file = tmp)
+df_xls <- read.xlsx(file = tmp, sheetIndex = 1)
+
+
+##df <- read.csv(text = rawToChar(obj)) Transforma o objeto em base de dados
+
+
+
 
 # Estrutra de Diret?rios
 # Alterar SR para o nfs  Usando storage do Watson (vai continuar com 2 storages?) colocando as chaves de conex?o

@@ -1,6 +1,6 @@
 # Bibliotecas
 require(textclean)
-require(odbc)
+#require(odbc)
 require(DBI)
 library(RJDBC) ### sempre usar essa biblioteca para conectar no db2
 
@@ -42,6 +42,7 @@ risco <- dbFetch(data)
 
 
 setorder(risco,DT_COMP_FECHAMENTO)
+risco=data.table(risco)
 EAD = risco[,.(DATA=DT_COMP_FECHAMENTO,CNPJ=CD_CNPJ_LIDER,ELEG=VL_ELEGIVEIS,EAD_TOTAL=VL_EAD_TOTAL,EAD_ORD=VL_EAD_ORDINARIA,EAD_COR=VL_EAD_CORRETORA,EAD_DPGE=VL_EAD_DPGE)]
 ncols = c("EAD_ORD", "EAD_COR", "EAD_DPGE", "EAD_TOTAL","ELEG")
 EAD[,(ncols):=lapply(.SD,function(x) ifelse(is.na(x),0,x)),.SDcols = ncols]
@@ -54,4 +55,4 @@ dataMaxElegiveis = max(EAD$DATA)
 # Salvar csv's
 # Salvar o csv dentro do storage do Watson (vai continuar com 2 storages?) colocar o c?digo e as chaves da conex?o
 write.csv2(EAD,arqto,row.names = FALSE)
-write.csv2(EAD,paste0(SDataEAD,"Eleg?veisBI.csv"),row.names = FALSE)
+write.csv2(EAD,paste0(SDataEAD,"ElegiveisBI.csv"),row.names = FALSE)

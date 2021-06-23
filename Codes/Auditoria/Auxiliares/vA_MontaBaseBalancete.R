@@ -1,11 +1,17 @@
-# Diret?rios
+# Credenciais do nfs comum
+
+Sys.setenv("AWS_S3_ENDPOINT" = "s3.us-south.cloud-object-storage.appdomain.cloud",
+           "AWS_ACCESS_KEY_ID" = "55a53226f77a454ab5ebe08256fd89ad",
+           "AWS_SECRET_ACCESS_KEY" = "88109a953cba3d743b33d2c1a588c34b7cb8b74ae72df667")
+
+
 # Alterar SR para o nfs  Usando storage do Watson (vai continuar com 2 storages?) colocando as chaves de conex?o
 SBal       = paste0(SData,"BALANCETE/");dir.create(SBal, showWarnings = FALSE)
 SBalzip    = paste0(SData,"BAL_ZIP/");dir.create(SBalzip, showWarnings = FALSE)
 SBal2      = paste0(SData,"BALANCETE");dir.create(SBal2, showWarnings = FALSE)
 
 
-dtini = "2020-12-01"
+dtini = "2021-03-01"
 vdata  = seq.Date(from = as.Date(dtini),to = Sys.Date(),by = "month")
 vdata = substr(gsub("-","",vdata),1,6)
 vtipo = c("sociedades","bancos","conglomerados","prudencial")
@@ -223,3 +229,43 @@ formulas=unlist(strsplit(formulas,"\\/"), use.names=FALSE)
 formulas= strip(formulas,digit.remove = FALSE)
 contasModelo = unique(formulas[substr(formulas,1,1)=="x"])
 contasModelo = mgsub(contasModelo,"x","X")
+
+
+library(RJDBC) ### sempre usar essa biblioteca para conectar no db2
+
+# Chaves da conexao 
+
+drv <- JDBC(driverClass="com.ibm.db2.jcc.DB2Driver", classPath="/opt/ibm/dsdriver/java/db2jcc4.jar")
+### URl da conexão
+
+Db2_FGC_url <- paste("jdbc:db2://",
+                     "db2w-yarheby.us-south.db2w.cloud.ibm.com",
+                     ":", "50001",
+                     "/", "BLUDB", ":sslConnection=true;retrieveMessagesFromServerOnGetMessage=true;globalSessionVariables=SQL_COMPAT=NPS;",
+                     sep=""
+)
+
+### Usuário e senha da conexão
+Db2_FGC_connection <- dbConnect(drv,
+                                Db2_FGC_url,
+                                "bluadmin",
+                                "pE9bnZ5bzYDo0qrh6yX4_ZZ9_RQT7"
+)
+
+
+
+#### Salva a base de output no db2
+
+
+
+for(i in 1:nrow(CONGLFIN)){
+  rows <- apply(CONGLFIN, 1, function(x){paste0("'", x, "'", collapse = ', ')})
+  rows <- paste0('(', rows[i], ')')
+  
+    queryinsert <- paste0(
+     "INSERT INTO FGCDATAMART.CONGLFIN(",   paste0(colnames(CONGLFIN), collapse = ', '),   ')', 
+    ' VALUES ',  paste0(rows, collapse = ', ')
+  )
+  dbSendUpdate(Db2_FGC_connection,queryinsert)
+}
+
