@@ -15,6 +15,7 @@ require(textclean)
 ### Força a versão por causa do get object
 require(devtools)
 install_version("aws.s3", version = "0.3.12")
+
 ## Puxa a aws.s3
 library("aws.s3")
 library(readr)
@@ -43,6 +44,7 @@ df_xls <- read.xlsx(file = tmp, sheetIndex = 1)
 # Estrutra de Diret?rios
 # Alterar SR para o nfs  Usando storage do Watson (vai continuar com 2 storages?) colocando as chaves de conex?o
 SR = "~/MVP/"
+
 SData  = paste0(SR,"Data/");dir.create(SData, showWarnings = FALSE)
 SDataEAD = paste0(SData,"EAD/");dir.create(SDataEAD, showWarnings = FALSE)
 SDataOut= paste0(SR,"DataOut/");dir.create(SDataOut, showWarnings = FALSE)
@@ -55,6 +57,7 @@ SAuxFIN = paste0(SAux,"FINANCEIRO/");dir.create(SAuxFIN, showWarnings = FALSE)
 SMod = paste0(SR,"Modelos/");dir.create(SMod, showWarnings = FALSE)
 SModIBBA = paste0(SMod,"IBBA/");dir.create(SModIBBA, showWarnings = FALSE)
 SModIBBAAnalise = paste0(SModIBBA,"Analise/");dir.create(SModIBBAAnalise, showWarnings = FALSE)
+
 SCodes= paste0(SR,"Codes/")
 SCodesAuditAux = paste0(SCodes,"Auditoria/Auxiliares/")
 
@@ -66,3 +69,36 @@ source(paste0(SCodesAuditAux,"vA_MontaEAD_NCenso.R"))
 source(paste0(SCodesAuditAux,"vA_MontaBaseBalancete.R"))
 source(paste0(SCodesAuditAux,"vA_Outputs.R"))
     
+
+
+
+
+
+
+
+############################ lilian_modif ############################ 
+library("stringi")
+require(devtools)
+install_version("aws.s3", version = "0.3.12")
+
+## Puxa a aws.s3
+library("aws.s3")
+
+
+Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
+           "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
+           "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
+
+list_directory <- list(SDataEAD, SDataOutMod)
+
+for (dir in list_directory){
+  for (i in list.files(dir)){
+    dest = paste0("s3://fgc-object-storage/", stri_sub(dir, 3, nchar(dir)), i)
+    file = paste0(dir,i)
+    
+    put_object(dest, file = file, bucket = "fgc-object-storage", region="")
+    
+    print(file)
+    
+  }
+}
