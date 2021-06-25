@@ -14,7 +14,6 @@ require(textclean)
 
 ### Força a versão por causa do get object
 require(devtools)
-install_version("aws.s3", version = "0.3.12")
 
 ## Puxa a aws.s3
 library("aws.s3")
@@ -76,6 +75,8 @@ source(paste0(SCodesAuditAux,"vA_Outputs.R"))
 
 
 
+
+
 ############################ lilian_modif ############################ 
 library("stringi")
 require(devtools)
@@ -89,16 +90,28 @@ Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
            "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
            "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
 
-list_directory <- list(SDataEAD, SDataOutMod)
+list_directory <- list(SDataEAD) #,
+                       #SDataOut,
+                       #SDataOutMod,
+                       #SDataOutEAD,
+                       #SAux ,
+                       #SAuxMod,
+                       #SAuxFIN,
+                       #SMod,
+                       #SModIBBA,
+                       #SModIBBAAnalise,)
 
 for (dir in list_directory){
   for (i in list.files(dir)){
-    dest = paste0("s3://fgc-object-storage/", stri_sub(dir, 3, nchar(dir)), i)
+    dest = paste0("s3://mvpfundsize-donotdelete-pr-8nsdgny9fj7grs/", stri_sub(dir, 3, nchar(dir)), i)
     file = paste0(dir,i)
     
-    put_object(dest, file = file, bucket = "fgc-object-storage", region="")
+    put_object(dest, file = file, bucket = "mvpfundsize-donotdelete-pr-8nsdgny9fj7grs", region="")
     
-    print(file)
+    print(file) ###coloca o arquivo no cos
+    unlink(file) ###remove os arquivos do rstudio
     
   }
 }
+
+
