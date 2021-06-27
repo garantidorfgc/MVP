@@ -7,7 +7,7 @@ SBal       = paste0(SData,"BALANCETE/");dir.create(SBal, showWarnings = FALSE)
 SBalzip    = paste0(SData,"BAL_ZIP/");dir.create(SBalzip, showWarnings = FALSE)
 SBal2      = paste0(SData,"BALANCETE");dir.create(SBal2, showWarnings = FALSE)
 
-dtini = "2021-03-01"
+dtini = "2021-05-01"
 vdata  = seq.Date(from = as.Date(dtini),to = Sys.Date(),by = "month")
 vdata = substr(gsub("-","",vdata),1,6)
 vtipo = c("sociedades","bancos","conglomerados","prudencial")
@@ -249,8 +249,7 @@ Db2_FGC_connection <- dbConnect(drv,
 #### Salva a base de output no db2
 for(i in 1:nrow(CONGLFIN)){
   rows <- apply(CONGLFIN, 1, function(x){paste0("'", x, "'", collapse = ', ')})
-  rows <- paste0('(', rows[i], ')')
-  
+  rows <- paste0('(', rows[i], ')') 
     queryinsert <- paste0(
      "INSERT INTO FGCDATAMART.CONGLFIN(",   paste0(colnames(CONGLFIN), collapse = ', '),   ')', 
     ' VALUES ',  paste0(rows, collapse = ', ')
