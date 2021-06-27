@@ -1,5 +1,4 @@
 # Bibliotecas
-
 require(readxl)
 require(data.table)
 require(xts)
@@ -9,14 +8,13 @@ require(ggplot2)
 require(RColorBrewer)
 require(textclean)
 
-
-
 ### Força a versão por causa do get object
 require(devtools)
+install_version("aws.s3", version = "0.3.12")
 
 ## Puxa a aws.s3
 library("aws.s3")
-library(readr)
+library("readr")
 install.packages("xlsx")
 library("xlsx")
 
@@ -24,13 +22,6 @@ library("xlsx")
 Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
            "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
            "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
-
-### Lê arquivo do nfs
-tmp <- tempfile(fileext = ".xls")
-r <- aws.s3::save_object(bucket = "mvpfundsize-donotdelete-pr-8nsdgny9fj7grs", object = "201611CONGLOMERADOS.xls", file = tmp)
-df_xls <- read.xlsx(file = tmp, sheetIndex = 1)
-
-##df <- read.csv(text = rawToChar(obj)) Transforma o objeto em base de dados
 
 # Estrutra de Diretórios
 SR = "~/MVP/"
@@ -53,19 +44,26 @@ SModIBBAAnalise = paste0(SModIBBA,"Analise/");dir.create(SModIBBAAnalise, showWa
 source(paste0(SCodesAuditAux,"vA_MontaEAD_NCenso.R"))
 source(paste0(SCodesAuditAux,"vA_MontaBaseBalancete.R"))
 source(paste0(SCodesAuditAux,"vA_Outputs.R"))
-    
-############################ lilian_modif ############################ 
-library("stringi")
-require(devtools)
-install_version("aws.s3", version = "0.3.12")
 
-## Puxa a aws.s3
-library("aws.s3")
+### Lê arquivo do nfs
+tmp <- tempfile(fileext = ".xls")
+r <- aws.s3::save_object(bucket = "mvpfundsize-donotdelete-pr-8nsdgny9fj7grs", object = "201611CONGLOMERADOS.xls", file = tmp)
+df_xls <- read.xlsx(file = tmp, sheetIndex = 1)
 
-Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
-           "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
-           "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
+##df <- read.csv(text = rawToChar(obj)) Transforma o objeto em base de dados
 
+############################# lilian_modif ############################ 
+#library("stringi")
+#require(devtools)
+#install_version("aws.s3", version = "0.3.12")
+#
+### Puxa a aws.s3
+#library("aws.s3")
+#
+#Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
+#           "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
+#           "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
+#
 #list_directory <- list(SDataEAD)
 #
 #for (dir in list_directory){
