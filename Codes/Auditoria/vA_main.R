@@ -18,6 +18,9 @@ library("readr")
 install.packages("xlsx")
 library("xlsx")
 
+destCOS = "s3://mvpfundsize-donotdelete-pr-8nsdgny9fj7grs/"
+bucketCOS = "mvpfundsize-donotdelete-pr-8nsdgny9fj7grs"
+
 # Estrutra de Diretórios
 SR = "~/MVP/"
 SCodes= paste0(SR,"Codes/")
