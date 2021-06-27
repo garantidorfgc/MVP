@@ -18,11 +18,6 @@ library("readr")
 install.packages("xlsx")
 library("xlsx")
 
-##Configuração das credenciais do object storage (COS)
-Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
-           "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
-           "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
-
 # Estrutra de Diretórios
 SR = "~/MVP/"
 SCodes= paste0(SR,"Codes/")
@@ -45,7 +40,13 @@ source(paste0(SCodesAuditAux,"vA_MontaEAD_NCenso.R"))
 source(paste0(SCodesAuditAux,"vA_MontaBaseBalancete.R"))
 source(paste0(SCodesAuditAux,"vA_Outputs.R"))
 
-### Lê arquivo do nfs
+
+### Configuração das credenciais do object storage (COS)
+Sys.setenv("AWS_S3_ENDPOINT" = "s3.us.cloud-object-storage.appdomain.cloud",
+           "AWS_ACCESS_KEY_ID" = "aa1f87ecb5d24147b8c93b09d0107ef4",
+           "AWS_SECRET_ACCESS_KEY" = "53d327883fdbc38a939cb7efb5cd98470cc12de4675a2af0")
+
+### Lê arquivo do COS
 tmp <- tempfile(fileext = ".xls")
 r <- aws.s3::save_object(bucket = "mvpfundsize-donotdelete-pr-8nsdgny9fj7grs", object = "201611CONGLOMERADOS.xls", file = tmp)
 df_xls <- read.xlsx(file = tmp, sheetIndex = 1)
