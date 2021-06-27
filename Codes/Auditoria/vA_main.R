@@ -33,7 +33,6 @@ df_xls <- read.xlsx(file = tmp, sheetIndex = 1)
 ##df <- read.csv(text = rawToChar(obj)) Transforma o objeto em base de dados
 
 # Estrutra de Diretórios
-# Alterar SR para o nfs  Usando storage do Watson (vai continuar com 2 storages?) colocando as chaves de conexão
 SR = "~/MVP/"
 SCodes= paste0(SR,"Codes/")
 SCodesAuditAux = paste0(SCodes,"Auditoria/Auxiliares/")
@@ -51,8 +50,6 @@ SModIBBA = paste0(SMod,"IBBA/");dir.create(SModIBBA, showWarnings = FALSE)
 SModIBBAAnalise = paste0(SModIBBA,"Analise/");dir.create(SModIBBAAnalise, showWarnings = FALSE)
 
 # source para os demais códigos 
-# mostrar um exemplo de como realizar a conexão no git hub
-# Colocar exemplos de como fazemos a alteração    
 source(paste0(SCodesAuditAux,"vA_MontaEAD_NCenso.R"))
 source(paste0(SCodesAuditAux,"vA_MontaBaseBalancete.R"))
 source(paste0(SCodesAuditAux,"vA_Outputs.R"))
